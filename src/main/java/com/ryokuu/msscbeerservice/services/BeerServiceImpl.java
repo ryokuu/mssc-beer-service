@@ -8,6 +8,7 @@ import com.ryokuu.msscbeerservice.web.controller.NotFoundException;
 import com.ryokuu.msscbeerservice.web.mappers.BeerMapper;
 import com.ryokuu.msscbeerservice.web.model.BeerDto;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class BeerServiceImpl implements BeerService {
+    
+    @Autowired
     private final BeerRepository beerRepository;
+    @Autowired
     private final BeerMapper beerMapper;
 
     @Override
