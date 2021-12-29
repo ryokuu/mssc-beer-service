@@ -1,5 +1,6 @@
 package com.ryokuu.msscbeerservice.web.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -21,7 +22,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 
-public class BeerDto {
+public class BeerDto implements Serializable{
+
+    static final long serialVersionID = -5815566940065181210L;
 
     @Null
     private UUID id;

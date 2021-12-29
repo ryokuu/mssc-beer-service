@@ -12,6 +12,7 @@ import com.ryokuu.msscbeerservice.web.model.BeerPagedList;
 import com.ryokuu.msscbeerservice.web.model.BeerStyleEnum;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,12 @@ public class BeerServiceImpl implements BeerService {
     @Autowired
     private final BeerMapper beerMapper;
 
+    @Cacheable(cacheNames = "beerCache", key = "#beerId", condition = "#showInventoryOnHand == false ")
     @Override
     public BeerDto getById(UUID beerId, Boolean showInvetoryOnHand) {
+
+        System.out.println("i was called");
+
         if (showInvetoryOnHand) {
             return beerMapper.beerToBeerDtoWithInvetory(
             beerRepository.findById(beerId).orElseThrow(NotFoundException::new));
@@ -40,26 +45,19 @@ public class BeerServiceImpl implements BeerService {
         
     }
 
+    @Cacheable(cacheNames = "beerUpcCache")
     @Override
-    public BeerDto saveNewBeer(BeerDto beerDto) {
-        
-        return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(beerDto)));
+    public BeerDto getByUpc(String upc) {
+        return beerMapper.beerToBeerDto(beerRepository.findByUpc(upc));
     }
 
-    @Override
-    public BeerDto updateBeer(UUID beerId, BeerDto beerDto) {
-        Beer beer = beerRepository.findById(beerId).orElseThrow(NotFoundException::new);
 
-        beer.setBeerName(beerDto.getBeerName());
-        beer.setBeerStyle(beerDto.getBeerStyle().name());
-        beer.setPrice(beerDto.getPrice());
-        beer.setUpc(beerDto.getUpc());
-
-        return beerMapper.beerToBeerDto(beerRepository.save(beer));
-    }
-
+    @Cacheable(cacheNames = "beerListCache", condition = "#showInventoryOnHand == false ")
     @Override
     public BeerPagedList listBeers(String beerName, BeerStyleEnum beerStyle, PageRequest pageRequest, Boolean showInvetoryOnHand) {
+
+        System.out.println("i was called");
+
         BeerPagedList beerPagedList;
         Page<Beer> beerPage;
 
@@ -99,5 +97,22 @@ public class BeerServiceImpl implements BeerService {
         }
         return beerPagedList;
     }
-    
+
+    @Override
+    public BeerDto saveNewBeer(BeerDto beerDto) {
+        
+        return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(beerDto)));
+    }
+
+    @Override
+    public BeerDto updateBeer(UUID beerId, BeerDto beerDto) {
+        Beer beer = beerRepository.findById(beerId).orElseThrow(NotFoundException::new);
+
+        beer.setBeerName(beerDto.getBeerName());
+        beer.setBeerStyle(beerDto.getBeerStyle().name());
+        beer.setPrice(beerDto.getPrice());
+        beer.setUpc(beerDto.getUpc());
+
+        return beerMapper.beerToBeerDto(beerRepository.save(beer));
+    }
 }
