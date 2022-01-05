@@ -2,7 +2,6 @@
 package com.ryokuu.msscbeerservice.bootstrap;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 import com.ryokuu.msscbeerservice.domain.Beer;
 import com.ryokuu.msscbeerservice.repositories.BeerRepository;
